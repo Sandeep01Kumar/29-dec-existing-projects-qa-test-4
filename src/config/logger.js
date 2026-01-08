@@ -65,10 +65,28 @@ winston.addColors(colors);
  * - Development: 'debug' for verbose output during development
  * - Production: 'info' to reduce log volume in production
  * 
+ * Uses config.logLevel if explicitly set, otherwise determines
+ * based on config.isDevelopment and config.isProduction flags.
+ * 
  * @returns {string} The log level to use
  */
 const getLogLevel = () => {
-  return config.logLevel || (config.isDevelopment ? 'debug' : 'info');
+  // Use explicitly configured log level if available
+  if (config.logLevel) {
+    return config.logLevel;
+  }
+  
+  // Environment-based defaults
+  if (config.isDevelopment) {
+    return 'debug';
+  }
+  
+  if (config.isProduction) {
+    return 'info';
+  }
+  
+  // Default fallback for other environments (e.g., test)
+  return 'info';
 };
 
 /**
