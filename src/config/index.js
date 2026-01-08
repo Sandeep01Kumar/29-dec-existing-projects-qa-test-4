@@ -32,7 +32,16 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
  * Maintains backward compatibility with original server.js
  * @type {number}
  */
-const PORT = parseInt(process.env.PORT, 10) || 3000;
+const rawPort = process.env.PORT;
+const parsedPort = parseInt(process.env.PORT, 10);
+const PORT = (!isNaN(parsedPort) && parsedPort >= 0 && parsedPort <= 65535) ? parsedPort : 3000;
+
+/**
+ * Flag to track if original PORT value was invalid
+ * Used for validation reporting
+ * @type {boolean}
+ */
+const portWasInvalid = rawPort !== undefined && rawPort !== '' && (isNaN(parsedPort) || parsedPort < 0 || parsedPort > 65535);
 
 /**
  * Extract LOG_LEVEL with environment-aware default
@@ -53,8 +62,8 @@ const validateConfiguration = () => {
   const warnings = [];
 
   // Validate PORT is a valid positive number
-  if (isNaN(PORT) || PORT < 0 || PORT > 65535) {
-    warnings.push(`Invalid PORT value: ${process.env.PORT}. Using default: 3000. PORT must be a number between 0 and 65535.`);
+  if (portWasInvalid) {
+    warnings.push(`Invalid PORT value: ${rawPort}. Using default: 3000. PORT must be a number between 0 and 65535.`);
   }
 
   // Validate NODE_ENV is one of expected values
@@ -110,7 +119,7 @@ const config = {
    * Default: 3000 (maintains backward compatibility with original server.js)
    * @type {number}
    */
-  port: isNaN(PORT) || PORT < 0 || PORT > 65535 ? 3000 : PORT,
+  port: PORT,
 
   /**
    * Winston logging level
