@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Coverage reports
+coverage/
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
